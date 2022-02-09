@@ -19,6 +19,7 @@ h4 {
     display: grid;
     grid-template-columns: repeat(2, auto);
     gap: 25px;
+    align-items: end;
 }
 
 .week, .current {
@@ -31,6 +32,7 @@ h4 {
     padding: 20px 30px;
     display: grid;
     grid-template-columns: repeat(8, auto);
+    gap: 50px;
 }
 
 .current {

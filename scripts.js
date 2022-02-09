@@ -21,11 +21,11 @@ async function apiCall() {
     return res
 }
 
-function convertDate(d) {
+function convertDate(d, withTime = true) {
     const unixDate = d.dt
     const millisec = unixDate * 1000
-    const date = new Date(millisec).toLocaleString()
-    return date
+    const date = new Date(millisec)
+    return withTime ? date.toLocaleString() : date.toLocaleDateString()
 }
 
 async function getCurrentWeather() {
@@ -48,7 +48,7 @@ async function getCurrentWeather() {
 }
 
 function getDailyWeather(d) {
-    const date = convertDate(d)
+    const date = convertDate(d, false)
     const temperature = (d.temp.day-273.15).toFixed(2) + 'ºC'
     const hum = d.humidity + '%'
 
