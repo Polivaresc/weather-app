@@ -37,33 +37,39 @@ h4 {
     gap: 25px;
 }
 
-.mist {
-    background-color: rgb(176, 167, 187);
-    color: black;
+.mist, .thunderstorm, .drizzle, .rain, .snow, .clear, .clouds {
     text-align: center;
     padding: 8px;
 }
-/* 
-.thunderstorm {
 
+.mist {
+    background-color: rgb(176, 167, 187);
+    color: black;
+}
+
+.thunderstorm {
+    background-color: rgb(66, 24, 214);
 }
 
 .drizzle {
-
+    background-color: rgb(131, 186, 250);
+    color: black;
 }
 
 .rain {
-
+    background-color: rgb(50, 143, 250);
 }
 
 .snow {
-
+    background-color: rgb(230, 241, 252);
+    color: black;
 }
 
 .clear {
-
+    background-color: rgb(224, 210, 84);
+    color: black;
 }
 
 .clouds {
-
-} */
+    background-color: rgb(106, 125, 145);
+}

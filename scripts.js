@@ -53,7 +53,6 @@ async function displayCurrentWeather() {
     } else {
         const condition = document.createElement('p')
         condition.textContent = weatherCond
-        condition.classList = 'mist'
         currentCond.appendChild(condition)
     }
 }
