@@ -9,28 +9,92 @@ async function geocode() {
     return data
 }
 
-async function getCurrentWeather() {
-    const data = await geocode()
+async function apiCall() {
+    const data = await geocode() 
     const latitude = data[0].lat
     const longitude = data[0].lon
-    const url = `http://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=acac1d4b1311bfec942ea9d7f3b91ad9`
-    
+    const url = `https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&exclude=minutely,hourly,alerts&appid=acac1d4b1311bfec942ea9d7f3b91ad9`
+
     const response = await fetch (url, { mode: 'cors' })
     const res = await response.json()
 
+    return res
+}
+
+function convertDate(d) {
+    const unixDate = d.dt
+    const millisec = unixDate * 1000
+    const date = new Date(millisec).toLocaleString()
+    return date
+}
+
+async function getCurrentWeather() {
+    const res = await apiCall()
+    const date = convertDate(res.current)
+    
     let weatherConditions
 
-    if (res.weather.length > 1) {
+    if (res.current.weather.length > 1) {
         weatherConditions = []
-        res.weather.map(w => weatherConditions.push(w.main))
+        res.current.weather.map(w => weatherConditions.push(w.main))
     } else {
-        weatherConditions = res.weather[0].main
+        weatherConditions = res.current.weather[0].main
     }
 
-    const temperature = (res.main.temp-273.15).toFixed(2) + 'ºC'
-    const hum = res.main.humidity + '%'
+    const temperature = (res.current.temp-273.15).toFixed(2) + 'ºC'
+    const hum = res.current.humidity + '%'
 
-    return { weatherConditions, temperature, hum }
+    return { date, temperature, hum, weatherConditions }
+}
+
+function getDailyWeather(d) {
+    const date = convertDate(d)
+    const temperature = (d.temp.day-273.15).toFixed(2) + 'ºC'
+    const hum = d.humidity + '%'
+
+    let weatherConditions
+
+    if (d.weather.length > 1) {
+        weatherConditions = []
+        d.weather.map(w => weatherConditions.push(w.main))
+    } else {
+        weatherConditions = d.weather[0].main
+    }
+
+    return { date, temperature, hum, weatherConditions }
+}
+
+
+function displayConditions(c, cond) {
+    const condition = document.createElement('p')
+    condition.textContent = c
+    cond.appendChild(condition)
+
+    switch (c) {
+        case 'Thunderstorm':
+            condition.classList.add('thunderstorm')
+            break;
+        case 'Drizzle':
+            condition.classList.add('drizzle')
+            break;
+        case 'Rain':
+            condition.classList.add('rain')
+            break;
+        case 'Snow':
+            condition.classList.add('snow')
+            break;
+        case 'Clear':
+            condition.classList.add('clear')
+            break;
+        case 'Clouds':
+            condition.classList.add('clouds')
+            break;
+    }    
+}
+
+function displayCurrentTime(d) {
+    const currentDate = document.querySelector('#current-date')
+    currentDate.textContent = d
 }
 
 async function displayCurrentWeather() {
@@ -46,24 +110,45 @@ async function displayCurrentWeather() {
     
     if (weatherCond instanceof Array) {
         for (let c of weatherCond) {
-            const condition = document.createElement('p')
-            condition.textContent = c
-            currentCond.appendChild(condition)
+            displayConditions(c, currentCond)
         }
     } else {
-        const condition = document.createElement('p')
-        condition.textContent = weatherCond
-        currentCond.appendChild(condition)
+        displayConditions(weatherCond, currentCond)
     }
+    displayCurrentTime(currentWeather.date)
 }
 
-function displayCurrentTime() {
-    const date = new Date().toLocaleString()
+async function displayDailyWeather() {
+    const res = await apiCall()
+    for (d of res.daily) {
 
-    const currentDate = document.querySelector('#current-date')
-    
-    currentDate.textContent = date
+        const dailyWeather = getDailyWeather(d)
+        const weatherCond = dailyWeather.weatherConditions
+
+        const dailyTemp = document.createElement('p')
+        const dailyHum = document.createElement('p')
+        const dailyCond = document.createElement('div')
+        const time = document.createElement('p')
+        
+        time.textContent = dailyWeather.date
+        dailyTemp.textContent = dailyWeather.temperature
+        dailyHum.textContent = dailyWeather.hum
+
+        if (weatherCond instanceof Array) {
+            for(let c of weatherCond) {
+                displayConditions(c, dailyCond)
+            } 
+        } else {
+            displayConditions(weatherCond, dailyCond)
+        }
+
+        const week = document.querySelector('.week')
+        const day = document.createElement('div')
+        day.append(time, dailyTemp, dailyHum, dailyCond)
+        week.appendChild(day)
+    }
+
 }
 
-displayCurrentTime()
 displayCurrentWeather()
+displayDailyWeather()

@@ -4,27 +4,37 @@ body {
     justify-content: center;
     margin: 0;
     background-color: rgb(26, 24, 36);
+    color: white;
 }
 
 h4 {
     margin: 0;
     padding: 0;
     font-size: x-large;
-    color: white;
 }
 
 .content {
-    width: 70%;
+    width: 80%;
     padding-top: 100px;
     display: grid;
     grid-template-columns: repeat(2, auto);
+    gap: 25px;
 }
 
-.current {
+.week, .current {
     background-color: rgb(62, 59, 73);
     border: 1px solid rgb(120, 117, 143);
     color: white;
-    width: 30%;
+}
+
+.week {
+    padding: 20px 30px;
+    display: grid;
+    grid-template-columns: repeat(8, auto);
+}
+
+.current {
+    max-width: 30%;
     min-width: fit-content;
     padding: 40px 60px;
 }
@@ -35,6 +45,13 @@ h4 {
     align-items: center;
     justify-content: space-between;
     gap: 25px;
+}
+
+#current-weather {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    margin-top: 25px;
 }
 
 .mist, .thunderstorm, .drizzle, .rain, .snow, .clear, .clouds {
