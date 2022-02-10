@@ -1,3 +1,8 @@
+displayCurrentWeather('Tokyo', 'jp')
+displayDailyWeather('Tokyo', 'jp')
+displayCity('Tokyo')
+
+
 function getInputs() {
     const cityInput = document.querySelector('#search-city')
     const cityValue = cityInput.value
@@ -27,23 +32,33 @@ function displayCity(city) {
 }
 
 async function geocode(city, code) {
-    const url= `http://api.openweathermap.org/geo/1.0/direct?q=${city},${code}&limit=1&appid=acac1d4b1311bfec942ea9d7f3b91ad9`
-    const response = await fetch(url, { mode: 'cors' })
-    const data = await response.json()
+    try {
+        const url= `http://api.openweathermap.org/geo/1.0/direct?q=${city},${code}&limit=1&appid=acac1d4b1311bfec942ea9d7f3b91ad9`
+        const response = await fetch(url, { mode: 'cors' })
+        const data = await response.json()
 
-    return data
+        return data
+    } catch (error) {
+        return error
+    }
+    
 }
 
 async function apiCall(city, code) {
-    const data = await geocode(city, code) 
-    const latitude = data[0].lat
-    const longitude = data[0].lon
-    const url = `https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&exclude=minutely,hourly,alerts&appid=acac1d4b1311bfec942ea9d7f3b91ad9`
-
-    const response = await fetch (url, { mode: 'cors' })
-    const res = await response.json()
-
-    return res
+    try {
+        const data = await geocode(city, code)
+        const latitude = data[0].lat
+        const longitude = data[0].lon
+        const url = `https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&exclude=minutely,hourly,alerts&appid=acac1d4b1311bfec942ea9d7f3b91ad9`
+    
+        const response = await fetch (url, { mode: 'cors' })
+        const res = await response.json()
+    
+        return res
+    } catch (error) {
+        error.message = 'We could not find that city'
+        alert(error.message)
+    }
 }
 
 function convertDate(d) {
@@ -184,10 +199,13 @@ async function displayDailyWeather(city, code) {
 
 
 document.querySelector('.submit-button').addEventListener('click', () => {
+    document.querySelector('.week').innerHTML = ''
+    document.querySelector('#current-conditions').innerHTML = ''
+
     const inputs = getInputs()
     displayCurrentWeather(inputs.cityValue, inputs.codeValue)
     displayDailyWeather(inputs.cityValue, inputs.codeValue)
     displayCity(inputs.cityValue)
-}, { once: true })
+})
 
 
