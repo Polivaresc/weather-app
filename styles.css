@@ -1,7 +1,7 @@
 body {
     font-family: 'Helvetica', sans-serif;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     margin: 0;
     background-color: rgb(26, 24, 36);
     color: white;
@@ -13,6 +13,42 @@ h4 {
     font-size: x-large;
 }
 
+input {
+    color: rgb(117, 125, 136);
+    font-family: inherit;
+    outline: none;
+    padding: 4px 6px;
+}
+
+input:focus, button:hover {
+    box-shadow: 0px 0px 3px 3px rgb(50, 143, 250);
+}
+
+.input-req {
+    box-shadow: 0px 0px 3px 3px rgb(253, 76, 115);
+}
+
+.city-form {
+    padding: 30px 40px;
+    align-self: flex-end;
+    width: fit-content;
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    gap: 25px;
+}
+
+.form-input {
+    display: flex;
+    flex-direction: column;
+}
+
+.submit-button {
+    font-family: inherit;
+    background-color: white;
+    border: none;
+    padding: 15px;
+}
+
 .content {
     width: 80%;
     padding-top: 100px;
@@ -20,16 +56,17 @@ h4 {
     grid-template-columns: repeat(2, auto);
     gap: 25px;
     align-items: end;
+    align-self: center;
 }
 
-.week, .current {
+.week, .current, .city-form {
     background-color: rgb(62, 59, 73);
     border: 1px solid rgb(120, 117, 143);
     color: white;
 }
 
 .week {
-    padding: 20px 30px;
+    padding: 40px;
     display: grid;
     grid-template-columns: repeat(8, auto);
     gap: 50px;

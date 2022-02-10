@@ -1,3 +1,24 @@
+document.querySelector('.submit-button').addEventListener('click', () => {
+    const cityInput = document.querySelector('#search-city')
+    const cityValue = cityInput.value
+    const codeInput = document.querySelector('#search-code')
+    const codeValue = codeInput.value
+
+    cityInput.classList.remove('input-req')
+    if (cityValue.length < 1) {
+        cityInput.classList.add('input-req')
+    } 
+
+    codeInput.classList.remove('input-req')
+    if (codeValue.length < 2) {
+        codeInput.classList.add('input-req')
+    }
+
+    cityValue.toLowerCase().replaceAll(' ', '-')
+    codeValue.toLowerCase()
+
+})
+
 async function geocode() {
     const city = 'copenhagen'
     const countryCode = 'dk'
