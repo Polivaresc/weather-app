@@ -65,6 +65,11 @@ input:focus, button:hover {
     color: white;
 }
 
+.weekday {
+    font-size: large;
+    font-weight: bold;
+}
+
 .week {
     padding: 40px;
     display: grid;
@@ -128,4 +133,14 @@ input:focus, button:hover {
 
 .clouds {
     background-color: rgb(106, 125, 145);
+}
+
+.hidden {
+    display: none;
+}
+
+.open-form {
+    font-size: large;
+    width: fit-content;
+    align-self: flex-end;
 }

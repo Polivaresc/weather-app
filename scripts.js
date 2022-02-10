@@ -1,4 +1,4 @@
-document.querySelector('.submit-button').addEventListener('click', () => {
+function getInputs() {
     const cityInput = document.querySelector('#search-city')
     const cityValue = cityInput.value
     const codeInput = document.querySelector('#search-code')
@@ -17,21 +17,25 @@ document.querySelector('.submit-button').addEventListener('click', () => {
     cityValue.toLowerCase().replaceAll(' ', '-')
     codeValue.toLowerCase()
 
-})
+    return { cityValue, codeValue }
+}
 
-async function geocode() {
-    const city = 'copenhagen'
-    const countryCode = 'dk'
-    const url= `http://api.openweathermap.org/geo/1.0/direct?q=${city},${countryCode}&limit=1&appid=acac1d4b1311bfec942ea9d7f3b91ad9`
+function displayCity(city) {
+    const upper = city.charAt(0).toUpperCase() + city.slice(1)
+    const currentCity = [...document.querySelectorAll('.current-city')]
+    currentCity.map(span => span.textContent = upper)
+}
 
+async function geocode(city, code) {
+    const url= `http://api.openweathermap.org/geo/1.0/direct?q=${city},${code}&limit=1&appid=acac1d4b1311bfec942ea9d7f3b91ad9`
     const response = await fetch(url, { mode: 'cors' })
     const data = await response.json()
 
     return data
 }
 
-async function apiCall() {
-    const data = await geocode() 
+async function apiCall(city, code) {
+    const data = await geocode(city, code) 
     const latitude = data[0].lat
     const longitude = data[0].lon
     const url = `https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&exclude=minutely,hourly,alerts&appid=acac1d4b1311bfec942ea9d7f3b91ad9`
@@ -42,16 +46,16 @@ async function apiCall() {
     return res
 }
 
-function convertDate(d, withTime = true) {
+function convertDate(d) {
     const unixDate = d.dt
     const millisec = unixDate * 1000
     const date = new Date(millisec)
-    return withTime ? date.toLocaleString() : date.toLocaleDateString()
+    return date
 }
 
-async function getCurrentWeather() {
-    const res = await apiCall()
-    const date = convertDate(res.current)
+async function getCurrentWeather(city, code) {
+    const res = await apiCall(city, code)
+    const date = convertDate(res.current).toLocaleString()
     
     let weatherConditions
 
@@ -69,7 +73,9 @@ async function getCurrentWeather() {
 }
 
 function getDailyWeather(d) {
-    const date = convertDate(d, false)
+    const date = convertDate(d)
+    const weekday = date.toLocaleDateString('en', {weekday: 'long'})
+    const day = date.toLocaleDateString()
     const temperature = (d.temp.day-273.15).toFixed(2) + 'ºC'
     const hum = d.humidity + '%'
 
@@ -82,7 +88,7 @@ function getDailyWeather(d) {
         weatherConditions = d.weather[0].main
     }
 
-    return { date, temperature, hum, weatherConditions }
+    return { weekday, day, temperature, hum, weatherConditions }
 }
 
 
@@ -92,6 +98,9 @@ function displayConditions(c, cond) {
     cond.appendChild(condition)
 
     switch (c) {
+        case 'Mist':
+            condition.classList.add('mist')
+            break;
         case 'Thunderstorm':
             condition.classList.add('thunderstorm')
             break;
@@ -118,8 +127,8 @@ function displayCurrentTime(d) {
     currentDate.textContent = d
 }
 
-async function displayCurrentWeather() {
-    const currentWeather = await getCurrentWeather()
+async function displayCurrentWeather(city, code) {
+    const currentWeather = await getCurrentWeather(city, code)
     const weatherCond = currentWeather.weatherConditions
 
     const currentTemp = document.querySelector('#current-temp')
@@ -139,8 +148,8 @@ async function displayCurrentWeather() {
     displayCurrentTime(currentWeather.date)
 }
 
-async function displayDailyWeather() {
-    const res = await apiCall()
+async function displayDailyWeather(city, code) {
+    const res = await apiCall(city, code)
     for (d of res.daily) {
 
         const dailyWeather = getDailyWeather(d)
@@ -149,9 +158,12 @@ async function displayDailyWeather() {
         const dailyTemp = document.createElement('p')
         const dailyHum = document.createElement('p')
         const dailyCond = document.createElement('div')
-        const time = document.createElement('p')
-        
-        time.textContent = dailyWeather.date
+        const weekDay = document.createElement('p')
+        const date = document.createElement('p')
+
+        weekDay.classList = 'weekday'
+        weekDay.textContent = dailyWeather.weekday
+        date.textContent = dailyWeather.day
         dailyTemp.textContent = dailyWeather.temperature
         dailyHum.textContent = dailyWeather.hum
 
@@ -165,11 +177,17 @@ async function displayDailyWeather() {
 
         const week = document.querySelector('.week')
         const day = document.createElement('div')
-        day.append(time, dailyTemp, dailyHum, dailyCond)
+        day.append(weekDay, date, dailyTemp, dailyHum, dailyCond)
         week.appendChild(day)
     }
-
 }
 
-displayCurrentWeather()
-displayDailyWeather()
+
+document.querySelector('.submit-button').addEventListener('click', () => {
+    const inputs = getInputs()
+    displayCurrentWeather(inputs.cityValue, inputs.codeValue)
+    displayDailyWeather(inputs.cityValue, inputs.codeValue)
+    displayCity(inputs.cityValue)
+}, { once: true })
+
+

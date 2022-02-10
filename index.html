@@ -15,7 +15,7 @@
 
 <body>
 
-    <div class="city-form">
+    <div class="city-form" id="form-section">
       
         <div class="form-input">
             <label for="search-city">City</label>
@@ -33,19 +33,19 @@
     <main class="content">
 
     <article class="current">
-        <header class="article-line"><h4>Now</h4><span>Copenhagen</span></header>
+        <header class="article-line"><h4>Now</h4><span class="current-city">City</span></header>
         
         <p id="current-date"></p>
 
         <div id="current-weather">
             <div class="article-line"><span>Temperature: </span><span id="current-temp"></span></div>
-            <div class="article-line"><span>Humidity: </span><span id="current-hum">Humidity</span></div>
+            <div class="article-line"><span>Humidity: </span><span id="current-hum"></span></div>
             <div id="current-conditions"></div>
         </div>
     </article>
 
     <section>
-        <header class="article-line"><h4>Weather in the next few days</h4><span>Copenhagen</span></header>
+        <header class="article-line"><h4>Weather in the next few days</h4><span class="current-city">City</span></header>
         <div class="week"></div>
     </section>
 
