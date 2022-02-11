@@ -32,20 +32,14 @@ function displayCity(city) {
 }
 
 async function geocode(city, code) {
-    try {
         const url= `http://api.openweathermap.org/geo/1.0/direct?q=${city},${code}&limit=1&appid=acac1d4b1311bfec942ea9d7f3b91ad9`
         const response = await fetch(url, { mode: 'cors' })
-        const data = await response.json()
+        const data = await response.json() 
 
         return data
-    } catch (error) {
-        return error
-    }
-    
 }
 
 async function apiCall(city, code) {
-    try {
         const data = await geocode(city, code)
         const latitude = data[0].lat
         const longitude = data[0].lon
@@ -55,10 +49,6 @@ async function apiCall(city, code) {
         const res = await response.json()
     
         return res
-    } catch (error) {
-        error.message = 'We could not find that city'
-        alert(error.message)
-    }
 }
 
 function convertDate(d) {
@@ -203,8 +193,13 @@ document.querySelector('.submit-button').addEventListener('click', () => {
     document.querySelector('#current-conditions').innerHTML = ''
 
     const inputs = getInputs()
-    displayCurrentWeather(inputs.cityValue, inputs.codeValue)
-    displayDailyWeather(inputs.cityValue, inputs.codeValue)
+    displayCurrentWeather(inputs.cityValue, inputs.codeValue).catch(()=> {
+        alert('Oops! We could not find that city')
+        location.reload()
+    })
+    displayDailyWeather(inputs.cityValue, inputs.codeValue).catch(() => {
+        return false
+    })
     displayCity(inputs.cityValue)
 })
 
